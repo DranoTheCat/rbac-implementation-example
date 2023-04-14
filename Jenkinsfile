@@ -4,6 +4,7 @@ pipeline {
     environment {
         SKIP_STAGE = true // I don't have a convenient stage environment that differs to test in
         SKIP_PROD = true // Ditto
+        DESTROY_DEV = false // Cleanup
     }
 
     stages {
@@ -85,5 +86,34 @@ pipeline {
             }
         }
 
+        stage('Destroy Dev Environment - Approval') {
+            when {
+                expression { 
+                    return env.DESTROY_DEV == 'true'
+                }
+            }
+            steps {
+                script {
+                    input message: 'DESTROY the Dev environment?',
+                    ok: 'Approve'
+                }
+            }
+        }
+
+        stage('Destroy Dev Environment') {
+            when {
+                expression { 
+                    return env.DESTROY_DEV == 'true'
+                }
+            }
+            environment {
+                AWS_ACCESS_KEY_ID = credentials('jenkins-agent-aws-access-key')
+                AWS_SECRET_ACCESS_KEY = credentials('jenkins-agent-aws-secret-key')
+            }
+            steps {
+                sh 'terraform init -backend-config=environments/dev.backendconfig'
+                sh 'terraform destroy -auto-approve -var-file=environments/dev.tfvars'
+            }
+        }
     }
 }
