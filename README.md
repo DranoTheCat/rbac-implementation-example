@@ -9,6 +9,11 @@ The overall design is to create IAM Groups to represent teams, which have manage
 
 ## Assumptions
 - I am assuming that for "access to" means "full access to," and am using the relevant AWS-managed Roles.  However, in the real world I would want to understand more about how the teams use it, to see if full access is actually required vs. read-only access.
+- I assume all stdout and other relevant logs from the Jenkins build host is being sent to some kind of logging solution
+- That there is a prometheus cluster somewhere is setup
+- There is an existing Jenkins setup to receive the commit hook and run the Jenkinsfile, configured with the logging / metrics requirements above
+- This existing Jenkins setup is emitting Prometheus metrics about job runs
+	- https://plugins.jenkins.io/prometheus/
 
 ## Pre-requisites
 In order to use this solution, it is assumed there already exists a functional AWS account, meeting the following requirements:
@@ -60,9 +65,15 @@ An example commit to delete the "dhart" user can be found here:  https://github.
 - This implementation assumes the Jenkins build agent running terraform itself has admin access.  See enumerating explicit permissions in future improvements below.
 - This implementation assumes management of the "aws-auth" ConfigMap is done out of scope of this implementation.  *This implementation currently only handles the IAM resources described in the requirements, however this is only sufficient for users to manage EKS clusters they themselves are the owners of.  Configuration of the "aws-auth" ConfigMap is required in addition to the IAM Role configuration provided here in order to access other EKS clusters in the account, which are valid targets, but that may not have been created by the same user.*
 ### Automation
+- The Jenkins pipeline should be triggered from commits / merges to main branch
+- Everything else is automated as code
 ### Monitoring
+- It is assumed above that logs and metrics from Jenkins are going somewhere else, where a dashboard for this could be created
+- Likewise, alerts could be driven from these metrics with AlertManager directly, or feeding into PagerDuty, Slack, etc.
 ### Logging
-
+- Per assumptions above, it is assumed all of the relevant logs from Jenkins are already configured to go to a remote site.
+- Secrets should not be logged in this solution
+- Encrypted secrets are logged in this solution, however they should only be able to be decrypted by the intended recipient
 ## Caveats
 - I don't want to create a bunch of tedious GPG keys, so am using the "userone" GPG key for everyone.  In a real setup (as per description above,) each user has their own GPG key.
 - All of the listed EKS clusters are fake ARNs and not in valid accounts.
@@ -74,10 +85,15 @@ An example commit to delete the "dhart" user can be found here:  https://github.
 - Add auto documentation of this module with terraform-docs - https://terraform-docs.io/user-guide/configuration/
 - Enumerate explicit permissions for the Jenkins build agent: https://developer.hashicorp.com/terraform/language/settings/backends/s3 + limited IAM to manage these specific teams.  (Principal of least access.)
 - Require specific approvers in the Jenkinsfile rather than just anyone
+- Tests that IAM Groups and users are working correctly
+- Dashboards into Jenkins build times, successes, and other operational information
 - The backend engineering team will likely eventually need access to Route53 and ACM, for out-of-band work
 - More teams will likely want a read-only view into all infrastructure, beyond what they manage directly
 - Move user lists / GPG keys out to make it easier to manage.
 - Use a secrets manager like Vault, AWS Secrets Manager, etc.
 - Possibly modularize the terraform.  Current design keeps all related configuration for a team in the same file, but this could become overwhelming and difficult to read as it becomes more complicated.
 - Possibly leverage IAM paths for organization.
-- Validations
+- Data / variable validations
+- Unit tests with hashicorp sentinel or something
+- Possibly do multi-branch pipelines and support multiple devs
+- Possibly deploy dev and stage in parallel
