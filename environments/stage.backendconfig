@@ -1,0 +1,5 @@
+bucket = "dranoterraform"
+key = "stage.tfstate"
+dynamodb_table = "example-rbac-implementation_lock"
+region = "us-west-2"
+encrypt = true

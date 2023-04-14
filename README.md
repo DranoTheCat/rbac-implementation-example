@@ -16,6 +16,7 @@ An example RBAC implementation for an online service
 
 ## Caveats
 - I don't want to create a bunch of tedious GPG keys, so am using the "userone" GPG key for everyone.  In a real setup (as per description above,) each user has their own GPG key.
+- All of the listed EKS clusters are fake ARNs and not in valid accounts.
 
 ## Future Improvements
 - Instead of managing secret access keys with GPG encryption, these could be managed by a more centralized solution like Vault or AWS Secrets Manager, or more federated solutions like Okta, etc.
