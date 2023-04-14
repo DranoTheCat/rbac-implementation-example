@@ -1,4 +1,4 @@
-output "sitreliability_engineer_credentials" {
+output "sitereliability_engineer_credentials" {
   value = [
     for username, user in aws_iam_user.sitereliability_engineers : {
       username                  = username

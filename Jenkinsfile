@@ -31,7 +31,7 @@ pipeline {
                 AWS_SECRET_ACCESS_KEY = credentials('jenkins-agent-aws-secret-key')
             }
             steps {
-                sh 'terraform output -raw -var-file=environments/dev.tfvars'
+                sh 'terraform output -raw -var-file=environments/dev.tfvars sitereliability_engineer_credentials'
             }
         }
     }
