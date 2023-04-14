@@ -1,7 +1,7 @@
 variable "aws_region" {
-  type = string
+  type        = string
   description = "The AWS Region you are using"
-  default = "us-west-2"
+  default     = "us-west-2"
 }
 
 variable "eks_backend_allowed_arns" {
