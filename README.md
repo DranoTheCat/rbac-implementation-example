@@ -12,10 +12,18 @@ An example RBAC implementation for an online service
 2. Create a file under the folder public_gpg_keys named user.gpg.  Paste the base64 of the user's private GPG keypair here.
 3. Add a user stanza for the user in main.tf, in the appropriate team location
 4. Commit the change in a new branch, and submit a PR.  Once approved and merged into main, automation should kick off the Jenkins pipeline.
+5. Once the pipeline has finished and changes have been applied, review the Jenkins build, click on the environment for the relevant stage (e.g., dev, stage, or prod), and click on the green Logs button.  Expand the "terraform apply" command subsection, and scroll through the outputs until you find the user credentials you are looking for.  Since the secret access key is encrypted, only the user should be able to decrypt, and so the information should be safe to send, or safe to have the user self-service retrieve.
+6. If permitted, this entire process could be self-serviced by the end-user.  They add themselves to the appropriate group via the steps above, submit a PR to be approved, and once merged in, they could retrieve their access key and secret.
 
-An example commit to add "example user" to frontend_engineers can be found here:  
+An example commit to add "example user" to frontend_engineers can be found here:  https://github.com/DranoTheCat/rbac-implementation-example/commit/9a5c6de44d2cf860dd0c6d27585351d3ae799354
+
+This is a fairly ugly and dirty approach to self-service, but it gets the job done in the time constraint.
 
 ## Instructions on how to Remove an existing user
+1. Remove the user's GPG key file.
+2. Remove the user's stanza from main.tf
+3. Commit the change in a new branch, and submit a PR.  Once approved and merged into main, automation should kick off the Jenkins pipeline.
+4. The user should be removed after the pipeline finishes running.
 
 ## Design Overview
 
