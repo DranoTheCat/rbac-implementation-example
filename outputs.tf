@@ -18,6 +18,16 @@ output "frontend_engineer_credentials" {
   ]
 }
 
+output "backend_engineer_credentials" {
+  value = [
+    for username, user in aws_iam_user.backend_engineers : {
+      username                  = username
+      aws_access_key_id         = aws_iam_access_key.backend_engineers[username].id
+      encrypted_secret_access_key = aws_iam_access_key.backend_engineers[username].encrypted_secret
+    }
+  ]
+}
+
 output "data_engineer_credentials" {
   value = [
     for username, user in aws_iam_user.data_engineers : {
