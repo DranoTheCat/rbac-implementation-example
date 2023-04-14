@@ -10,7 +10,7 @@ The overall design is to create IAM Groups to represent teams, which have manage
 ## Assumptions
 - I am assuming that for "access to" means "full access to," and am using the relevant AWS-managed Roles.  However, in the real world I would want to understand more about how the teams use it, to see if full access is actually required vs. read-only access.
 - I assume all stdout and other relevant logs from the Jenkins build host is being sent to some kind of logging solution
-- That there is a prometheus cluster somewhere is setup
+- That there is a prometheus cluster somewhere setup
 - There is an existing Jenkins setup to receive the commit hook and run the Jenkinsfile, configured with the logging / metrics requirements above
 - This existing Jenkins setup is emitting Prometheus metrics about job runs
 	- https://plugins.jenkins.io/prometheus/
@@ -19,8 +19,7 @@ The overall design is to create IAM Groups to represent teams, which have manage
 In order to use this solution, it is assumed there already exists a functional AWS account, meeting the following requirements:
 - There is an existing S3 bucket designated for Terraform state purposes.  This bucket should have S3 versioning enabled, however this is not necessary for functionality.
 - There is an existing DynamoDB bucket designated for Terraform lock purposes
-- This implementation does not deal with what AWS access EKS itself needs to operate.  E.g., AmazonEKSWorkerNodePolicy and friends
-- , and assumes that an existing Role EKS clusters can use is already present and managed in this account.
+- This implementation does not deal with what AWS access EKS itself needs to operate.  E.g., AmazonEKSWorkerNodePolicy and friends, and assumes that an existing Role EKS clusters can use is already present and managed in this account.
 - The Jenkins build system can via some means run the Jenkinsfile with appropriate permissions in the local (or correct trust with an external) AWS account.  This is likely an Admin or Build IAM Role.
 
 # Important Links
@@ -29,14 +28,16 @@ Jenkins Build:  TBD  *(I was testing on my private home Jenkins server)*
 # Instructions
 ## Instructions on how to Add a new user
 1. A Base64 of the user's private GPG keypair is required.  This can be generated in any method desired; for example, install GnuPG and run:
+```
     gpg --full-generate-key
     gpg --list-keys
     gpg --export 989296EB978E333BC8D6E8724876D98BA451E7FF |base64
-2. Create a file under the folder public_gpg_keys named user.gpg.  Paste the base64 of the user's private GPG keypair here.
-3. Add a user stanza for the user in main.tf, in the appropriate team location
-4. Commit the change in a new branch, and submit a PR.  Once approved and merged into main, automation should kick off the Jenkins pipeline.
-5. Once the pipeline has finished and changes have been applied, review the Jenkins build, click on the environment for the relevant stage (e.g., dev, stage, or prod), and click on the green Logs button.  Expand the "terraform apply" command subsection, and scroll through the outputs until you find the user credentials you are looking for.  Since the secret access key is encrypted, only the user should be able to decrypt, and so the information should be safe to send, or safe to have the user self-service retrieve.
-6. If permitted, this entire process could be self-serviced by the end-user.  They add themselves to the appropriate group via the steps above, submit a PR to be approved, and once merged in, they could retrieve their access key and secret.
+```
+3. Create a file under the folder public_gpg_keys named user.gpg.  Paste the base64 of the user's private GPG keypair here.
+4. Add a user stanza for the user in main.tf, in the appropriate team location
+5. Commit the change in a new branch, and submit a PR.  Once approved and merged into main, automation should kick off the Jenkins pipeline.
+6. Once the pipeline has finished and changes have been applied, review the Jenkins build, click on the environment for the relevant stage (e.g., dev, stage, or prod), and click on the green Logs button.  Expand the "terraform apply" command subsection, and scroll through the outputs until you find the user credentials you are looking for.  Since the secret access key is encrypted, only the user should be able to decrypt, and so the information should be safe to send, or safe to have the user self-service retrieve.
+7. If permitted, this entire process could be self-serviced by the end-user.  They add themselves to the appropriate group via the steps above, submit a PR to be approved, and once merged in, they could retrieve their access key and secret.
 
 An example commit to add "example user" to frontend_engineers can be found here:  https://github.com/DranoTheCat/rbac-implementation-example/commit/9a5c6de44d2cf860dd0c6d27585351d3ae799354
 
