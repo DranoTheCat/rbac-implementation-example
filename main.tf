@@ -31,4 +31,13 @@ locals {
       gpg_pub_key = "public_gpg_keys/userone.gpg"
     }
   ]
+
+  // Add Backend Engineering Team Members Here
+  backend_engineers = [
+    {
+      username    = "userfive"
+      fullname    = "User Five"
+      gpg_pub_key = "public_gpg_keys/userone.gpg"
+    }
+  ]
 }
