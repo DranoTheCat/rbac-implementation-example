@@ -15,6 +15,7 @@ pipeline {
             }
             steps {
                 sh 'terraform init -backend-config=environments/dev.backendconfig'
+                sh 'terraform fmt -check'
                 sh 'terraform validate'
             }
         }
