@@ -24,5 +24,15 @@ pipeline {
                 sh 'terraform apply -auto-approve tfplan'
             }
         }
+
+        stage('Dev Output') {
+            environment {
+                AWS_ACCESS_KEY_ID = credentials('jenkins-agent-aws-access-key')
+                AWS_SECRET_ACCESS_KEY = credentials('jenkins-agent-aws-secret-key')
+            }
+            steps {
+                sh 'terraform output -raw -var-file=environments/dev.tfvars'
+            }
+        }
     }
 }
