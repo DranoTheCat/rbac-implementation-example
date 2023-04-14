@@ -2,7 +2,22 @@
 
 An example RBAC implementation for an online service
 
-## Overall Design
+## Important Links
+
+## Instructions on how to Add a new user
+1. A Base64 of the user's private GPG keypair is required.  This can be generated in any method desired; for example, install GnuPG and run:
+    gpg --full-generate-key
+    gpg --list-keys
+    gpg --export 989296EB978E333BC8D6E8724876D98BA451E7FF |base64
+2. Create a file under the folder public_gpg_keys named user.gpg.  Paste the base64 of the user's private GPG keypair here.
+3. Add a user stanza for the user in main.tf, in the appropriate team location
+4. Commit the change in a new branch, and submit a PR.  Once approved and merged into main, automation should kick off the Jenkins pipeline.
+
+An example commit to add "example user" to frontend_engineers can be found here:  
+
+## Instructions on how to Remove an existing user
+
+## Design Overview
 
 ## Considerations
 ### General Considerations

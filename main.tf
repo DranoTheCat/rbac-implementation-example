@@ -29,6 +29,11 @@ locals {
       username    = "userfour"
       fullname    = "User Four"
       gpg_pub_key = "public_gpg_keys/userone.gpg"
+    },
+    {
+      username    = "exampleuser"
+      fullname    = "Example User"
+      gpg_pub_key = "public_gpg_keys/exampleuser.gpg"
     }
   ]
 
