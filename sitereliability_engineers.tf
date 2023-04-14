@@ -1,3 +1,11 @@
+data "local_file" "sitereliability_engineer_gpg_public_keys" {
+  for_each = {
+    for index, engineer in local.sitereliability_engineers:
+    engineer.username => engineer
+  }
+  filename = each.value.gpg_pub_key
+}
+
 resource "aws_iam_user" "sitereliability_engineers" {
   for_each = {
     for index, engineer in local.sitereliability_engineers:
