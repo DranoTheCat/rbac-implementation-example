@@ -40,4 +40,18 @@ locals {
       gpg_pub_key = "public_gpg_keys/userone.gpg"
     }
   ]
+
+  // Add Data Engineering Team Members Here
+  data_engineers = [
+    {
+      username    = "usersix"
+      fullname    = "User Six"
+      gpg_pub_key = "public_gpg_keys/userone.gpg"
+    },
+    {
+      username    = "userseven"
+      fullname    = "User Seven"
+      gpg_pub_key = "public_gpg_keys/userone.gpg"
+    }
+  ]
 }
