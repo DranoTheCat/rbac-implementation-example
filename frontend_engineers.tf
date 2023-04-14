@@ -17,6 +17,9 @@ resource "aws_iam_user" "frontend_engineers" {
 }
 
 resource "aws_iam_access_key" "frontend_engineers" {
+  depends_on = [
+    aws_iam_user.frontend_engineers
+  ]
   for_each = {
     for index, engineer in local.frontend_engineers:
     engineer.username => engineer

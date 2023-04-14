@@ -22,6 +22,9 @@ resource "aws_iam_group" "sitereliability_engineering" {
 }
 
 resource "aws_iam_access_key" "sitereliability_engineers" {
+  depends_on = [
+    aws_iam_user.sitereliability_engineers
+  ]
   for_each = {
     for index, engineer in local.sitereliability_engineers:
     engineer.username => engineer
